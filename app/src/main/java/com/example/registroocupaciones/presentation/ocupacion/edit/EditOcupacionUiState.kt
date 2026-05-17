@@ -1,4 +1,4 @@
-package com.example.registroocupaciones.presentation.edit
+package com.example.registroocupaciones.presentation.ocupacion.edit
 
 data class EditOcupacionUiState(
     val ocupacionId: Int? = null,
