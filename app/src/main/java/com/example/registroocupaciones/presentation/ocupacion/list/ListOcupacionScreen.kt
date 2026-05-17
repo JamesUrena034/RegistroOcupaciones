@@ -1,4 +1,4 @@
-package com.example.registroocupaciones.presentation.list
+package com.example.registroocupaciones.presentation.ocupacion.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
