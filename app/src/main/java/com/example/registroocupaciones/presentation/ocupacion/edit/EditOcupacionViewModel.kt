@@ -1,4 +1,4 @@
-package com.example.registroocupaciones.presentation.edit
+package com.example.registroocupaciones.presentation.ocupacion.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
