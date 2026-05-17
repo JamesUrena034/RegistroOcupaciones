@@ -1,4 +1,4 @@
-package com.example.registroocupaciones.presentation.edit
+package com.example.registroocupaciones.presentation.ocupacion.edit
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
