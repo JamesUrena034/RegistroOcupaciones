@@ -1,4 +1,4 @@
-package com.example.registroocupaciones.presentation.list
+package com.example.registroocupaciones.presentation.ocupacion.list
 
 
 import com.example.registroocupaciones.domain.ocupaciones.model.Ocupacion
