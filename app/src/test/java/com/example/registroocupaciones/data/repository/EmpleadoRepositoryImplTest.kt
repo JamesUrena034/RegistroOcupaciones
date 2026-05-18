@@ -109,7 +109,7 @@ class EmpleadoRepositoryImplTest {
         // Given
         val entity = EmpleadoEntity(
             empleadoId = 1,
-            nombres = "Empleadd Test",
+            nombres = "Empleado Test",
             fechaIngreso = "2026-05-17",
             sexo = "M",
             sueldo = 30.0
