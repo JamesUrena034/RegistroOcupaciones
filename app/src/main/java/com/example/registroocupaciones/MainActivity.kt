@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
 import androidx.navigation.compose.rememberNavController
+import com.example.registroocupaciones.presentation.navegation.DrawMenu
 import com.example.registroocupaciones.presentation.navigation.RegistroNavHost
 import com.example.registroocupaciones.ui.theme.RegistroOcupacionesTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,7 +20,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             RegistroOcupacionesTheme {
                 val navHostController = rememberNavController()
-                RegistroNavHost(navHostController = navHostController)
+                val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+                DrawMenu(
+                    drawerState = drawerState,
+                    navHostController = navHostController
+                ) {
+                    RegistroNavHost(
+                        navHostController = navHostController,
+                        drawerState = drawerState
+                    )
+                }
             }
         }
     }
