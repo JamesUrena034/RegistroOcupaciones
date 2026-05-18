@@ -110,7 +110,7 @@ private fun EmpleadoRow(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Fecha: ${empleado.fechaIngreso}",
+                    text = "Fecha Ingreso: ${empleado.fechaIngreso}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
