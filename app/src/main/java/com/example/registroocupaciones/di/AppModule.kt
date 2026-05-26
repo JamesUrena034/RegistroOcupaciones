@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.room.Room
 import com.example.registroocupaciones.data.database.OcupacionDb
 import com.example.registroocupaciones.data.local.dao.EmpleadoDao
+import com.example.registroocupaciones.data.ocupaciones.local.dao.HoraExtraDao
 import com.example.registroocupaciones.data.repository.EmpleadoRepositoryImpl
 import com.example.registroocupaciones.data.ocupaciones.local.dao.OcupacionDao
+import com.example.registroocupaciones.data.ocupaciones.repository.HoraExtraRepositoryImpl
 import com.example.registroocupaciones.data.ocupaciones.repository.OcupacionRepositoryImpl
 import com.example.registroocupaciones.domain.empleadoos.repository.EmpleadoRepository
+import com.example.registroocupaciones.domain.horaextra.repository.HoraExtraRepository
 import com.example.registroocupaciones.domain.ocupaciones.repository.OcupacionRepository
 import dagger.Module
 import dagger.Provides
@@ -53,5 +56,17 @@ object AppModule {
     @Singleton
     fun provideEmpleadoRepository(empleadoDao: EmpleadoDao): EmpleadoRepository {
         return EmpleadoRepositoryImpl(empleadoDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHoraExtraDao(ocupacionDb: OcupacionDb.OcupacionDB): HoraExtraDao {
+        return ocupacionDb.horaExtraDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideHoraExtraRepository(horaExtraDao: HoraExtraDao): HoraExtraRepository {
+        return HoraExtraRepositoryImpl(horaExtraDao)
     }
 }
