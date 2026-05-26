@@ -11,6 +11,8 @@ import com.example.registroocupaciones.presentation.ocupacion.list.OcupacionList
 import com.example.registroocupaciones.presentation.ocupacion.edit.EditOcupacionScreen
 import com.example.registroocupaciones.presentation.empleado.list.EmpleadoListScreen
 import com.example.registroocupaciones.presentation.empleado.edit.EditEmpleadoScreen
+import com.example.registroocupaciones.presentation.horaextra.edit.EditHoraExtraScreen
+import com.example.registroocupaciones.presentation.horaextra.list.ListHoraExtraScreen
 import com.example.registroocupaciones.presentation.navegation.Screen
 import kotlinx.coroutines.launch
 
@@ -72,6 +74,27 @@ fun RegistroNavHost(
                 onDrawer = {
                     scope.launch { drawerState.open() }
                 }
+            )
+        }
+
+        composable<Screen.HoraExtraList> {
+            ListHoraExtraScreen(
+                onDrawer = {
+                    scope.launch { drawerState.open() }
+                },
+                goToEditHoraExtra = { id ->
+                    navHostController.navigate(Screen.HoraExtra(id))
+                },
+                createHoraExtra = {
+                    navHostController.navigate(Screen.HoraExtra(0))
+                }
+            )
+        }
+        composable<Screen.HoraExtra> {
+            val args = it.toRoute<Screen.HoraExtra>()
+            EditHoraExtraScreen(
+                horaExtraId = args.horaExtraId,
+                onBack = { navHostController.navigateUp() }
             )
         }
     }
