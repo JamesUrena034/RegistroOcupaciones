@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -27,6 +28,7 @@ fun EditEmpleadoScreen(
     empleadoId: Int?,
     onNavigateBack: () -> Unit,
     onDrawer: () -> Unit,
+    isTabletOrPC: Boolean,
     viewModel: EditEmpleadoViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -45,7 +47,8 @@ fun EditEmpleadoScreen(
         state = state,
         onEvent = { event -> viewModel.onEvent(event) },
         onNavigateBack = onNavigateBack,
-        onDrawer = onDrawer
+        onDrawer = onDrawer,
+        isTabletOrPC = isTabletOrPC
     )
 }
 
@@ -55,7 +58,8 @@ private fun EditEmpleadoBody(
     state: EditEmpleadoUiState,
     onEvent: (EditEmpleadoUiEvent) -> Unit,
     onNavigateBack: () -> Unit,
-    onDrawer: () -> Unit
+    onDrawer: () -> Unit,
+    isTabletOrPC: Boolean
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
@@ -77,8 +81,10 @@ private fun EditEmpleadoBody(
             CenterAlignedTopAppBar(
                 title = { Text(if (state.isNew) "Nuevo Empleado" else "Editar Empleado") },
                 navigationIcon = {
-                    IconButton(onClick = onDrawer) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    if (!isTabletOrPC) {
+                        IconButton(onClick = onDrawer) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
                     }
                 },
                 actions = {
@@ -89,102 +95,109 @@ private fun EditEmpleadoBody(
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
+                .padding(padding),
+            contentAlignment = Alignment.TopCenter
         ) {
-            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max = 600.dp)
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
 
-                    OutlinedTextField(
-                        value = state.nombres,
-                        onValueChange = { onEvent(EditEmpleadoUiEvent.NombresChanged(it)) },
-                        label = { Text("Nombres") },
-                        placeholder = { Text("Ej: Juan Pérez") },
-                        isError = state.nombresError != null,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    state.nombresError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
-
-                    Spacer(Modifier.height(12.dp))
-
-                    Box(modifier = Modifier.fillMaxWidth()) {
                         OutlinedTextField(
-                            value = state.fechaIngreso,
-                            onValueChange = {},
-                            label = { Text("Fecha") },
-                            placeholder = { Text("Seleccione la fecha") },
-                            isError = state.fechaIngresoError != null,
-                            modifier = Modifier.fillMaxWidth(),
-                            enabled = false,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                                disabledBorderColor = if (state.fechaIngresoError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline,
-                                disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            value = state.nombres,
+                            onValueChange = { onEvent(EditEmpleadoUiEvent.NombresChanged(it)) },
+                            label = { Text("Nombres") },
+                            placeholder = { Text("Ej: Juan Pérez") },
+                            isError = state.nombresError != null,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        state.nombresError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
+
+                        Spacer(Modifier.height(12.dp))
+
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            OutlinedTextField(
+                                value = state.fechaIngreso,
+                                onValueChange = {},
+                                label = { Text("Fecha") },
+                                placeholder = { Text("Seleccione la fecha") },
+                                isError = state.fechaIngresoError != null,
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = false,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                                    disabledBorderColor = if (state.fechaIngresoError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline,
+                                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             )
-                        )
-                        Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .clickable { datePickerDialog.show() }
-                        )
-                    }
-                    state.fechaIngresoError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
-
-                    Spacer(Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = state.sexo,
-                        onValueChange = { onEvent(EditEmpleadoUiEvent.SexoChanged(it)) },
-                        label = { Text("Sexo") },
-                        placeholder = { Text("M o F") },
-                        isError = state.sexoError != null,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    state.sexoError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
-
-                    Spacer(Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = state.sueldo,
-                        onValueChange = { onEvent(EditEmpleadoUiEvent.SueldoChanged(it)) },
-                        label = { Text("Sueldo") },
-                        prefix = { Text("$ ") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        isError = state.sueldoError != null,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    state.sueldoError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
-
-                    Spacer(Modifier.height(24.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Button(
-                            onClick = { onEvent(EditEmpleadoUiEvent.Save) },
-                            modifier = Modifier.weight(1f),
-                            enabled = !state.isSaving
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = null)
-                            Spacer(Modifier.width(4.dp))
-                            Text("Guardar")
+                            Box(
+                                modifier = Modifier
+                                    .matchParentSize()
+                                    .clickable { datePickerDialog.show() }
+                            )
                         }
+                        state.fechaIngresoError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
 
-                        if (!state.isNew) {
-                            OutlinedButton(
-                                onClick = { onEvent(EditEmpleadoUiEvent.Delete) },
+                        Spacer(Modifier.height(12.dp))
+
+                        OutlinedTextField(
+                            value = state.sexo,
+                            onValueChange = { onEvent(EditEmpleadoUiEvent.SexoChanged(it)) },
+                            label = { Text("Sexo") },
+                            placeholder = { Text("M o F") },
+                            isError = state.sexoError != null,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        state.sexoError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
+
+                        Spacer(Modifier.height(12.dp))
+
+                        OutlinedTextField(
+                            value = state.sueldo,
+                            onValueChange = { onEvent(EditEmpleadoUiEvent.SueldoChanged(it)) },
+                            label = { Text("Sueldo") },
+                            prefix = { Text("$ ") },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            isError = state.sueldoError != null,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        state.sueldoError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
+
+                        Spacer(Modifier.height(24.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Button(
+                                onClick = { onEvent(EditEmpleadoUiEvent.Save) },
                                 modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
-                                enabled = !state.isDeleting
+                                enabled = !state.isSaving
                             ) {
-                                Icon(Icons.Default.Delete, contentDescription = null)
+                                Icon(Icons.Default.Add, contentDescription = null)
                                 Spacer(Modifier.width(4.dp))
-                                Text("Eliminar")
+                                Text("Guardar")
+                            }
+
+                            if (!state.isNew) {
+                                OutlinedButton(
+                                    onClick = { onEvent(EditEmpleadoUiEvent.Delete) },
+                                    modifier = Modifier.weight(1f),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
+                                    enabled = !state.isDeleting
+                                ) {
+                                    Icon(Icons.Default.Delete, contentDescription = null)
+                                    Spacer(Modifier.width(4.dp))
+                                    Text("Eliminar")
+                                }
                             }
                         }
                     }
@@ -208,7 +221,8 @@ fun EditEmpleadoPreview() {
             ),
             onEvent = {},
             onNavigateBack = {},
-            onDrawer = {}
+            onDrawer = {},
+            isTabletOrPC = false
         )
     }
 }
