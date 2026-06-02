@@ -1,8 +1,9 @@
 package com.example.registroocupaciones.presentation.horaextra.list
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -24,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun ListHoraExtraScreen(
     onDrawer: () -> Unit,
+    isTabletOrPC: Boolean,
     goToEditHoraExtra: (Int) -> Unit,
     createHoraExtra: () -> Unit,
     viewModel: ListHoraExtraViewModel = hiltViewModel()
@@ -35,8 +37,10 @@ fun ListHoraExtraScreen(
             CenterAlignedTopAppBar(
                 title = { Text("Listado de Horas Extras") },
                 navigationIcon = {
-                    IconButton(onClick = onDrawer) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    if (!isTabletOrPC) {
+                        IconButton(onClick = onDrawer) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
                     }
                 }
             )
@@ -66,8 +70,10 @@ fun ListHoraExtraScreen(
                     Text("No hay registros de horas extras", color = Color.Gray)
                 }
             } else {
-                LazyColumn(
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 340.dp),
                     modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     contentPadding = PaddingValues(vertical = 4.dp)
                 ) {

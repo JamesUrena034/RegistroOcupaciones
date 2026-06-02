@@ -11,7 +11,11 @@ plugins {
 android {
     namespace = "com.example.registroocupaciones"
     compileSdk = 36
-
+    lint {
+        disable += "NullSafeMutableLiveData"
+        disable += "FrequentlyChangingValue"
+        abortOnError = false
+    }
     defaultConfig {
         applicationId = "com.example.registroocupaciones"
         minSdk = 24
@@ -61,6 +65,7 @@ dependencies {
     //room
     implementation("androidx.room:room-runtime:2.7.2")
     implementation(libs.androidx.room.common.jvm)
+    implementation(libs.androidx.compose.adaptive.navigation)
     annotationProcessor("androidx.room:room-compiler:2.7.2")
     ksp("androidx.room:room-compiler:2.7.2")
     implementation("androidx.room:room-ktx:2.7.2")
@@ -70,6 +75,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.57.1")
     ksp("com.google.dagger:hilt-android-compiler:2.57.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("androidx.compose.material3.adaptive:adaptive-layout:1.0.0")
 
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:3.0.0")

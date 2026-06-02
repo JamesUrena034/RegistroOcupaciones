@@ -4,11 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun EditHoraExtraScreen(
     horaExtraId: Int?,
     onBack: () -> Unit,
+    isTabletOrPC: Boolean,
     viewModel: EditHoraExtraViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -39,7 +41,11 @@ fun EditHoraExtraScreen(
             TopAppBar(
                 title = { Text(if (state.isNew) "Agregar Horas Extras" else "Modificar Registro") },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, "Atrás") }
+                    if (!isTabletOrPC) {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Atrás")
+                        }
+                    }
                 },
                 actions = {
                     if (!state.isNew) {
@@ -51,88 +57,95 @@ fun EditHoraExtraScreen(
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(padding),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Box(
+            Column(
                 modifier = Modifier
+                    .widthIn(max = 600.dp)
                     .fillMaxWidth()
-                    .clickable { expanded = true }
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                OutlinedTextField(
-                    value = state.empleadoSeleccionado?.nombres ?: "Seleccione un Empleado",
-                    onValueChange = {},
-                    readOnly = true,
-                    enabled = false,
-                    label = { Text("Empleado") },
-                    trailingIcon = { Icon(Icons.Default.ArrowDropDown, "Dropdown") },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                        disabledBorderColor = MaterialTheme.colorScheme.outline,
-                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { expanded = true }
                 ) {
-                    state.empleados.forEach { emp ->
-                        DropdownMenuItem(
-                            text = { Text(emp.nombres) },
-                            onClick = {
-                                viewModel.onEvent(EditHoraExtraUiEvent.EmpleadoChanged(emp))
-                                expanded = false
-                            }
+                    OutlinedTextField(
+                        value = state.empleadoSeleccionado?.nombres ?: "Seleccione un Empleado",
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = false,
+                        label = { Text("Empleado") },
+                        trailingIcon = { Icon(Icons.Default.ArrowDropDown, "Dropdown") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                            disabledBorderColor = MaterialTheme.colorScheme.outline,
+                            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        state.empleados.forEach { emp ->
+                            DropdownMenuItem(
+                                text = { Text(emp.nombres) },
+                                onClick = {
+                                    viewModel.onEvent(EditHoraExtraUiEvent.EmpleadoChanged(emp))
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
-            }
 
-            OutlinedTextField(
-                value = state.horasSemanales,
-                onValueChange = { viewModel.onEvent(EditHoraExtraUiEvent.HorasSemanalesChanged(it)) },
-                label = { Text("Horas Semanales Trabajadas") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
-            )
+                OutlinedTextField(
+                    value = state.horasSemanales,
+                    onValueChange = { viewModel.onEvent(EditHoraExtraUiEvent.HorasSemanalesChanged(it)) },
+                    label = { Text("Horas Semanales Trabajadas") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            OutlinedTextField(
-                value = state.horasNocturnas,
-                onValueChange = { viewModel.onEvent(EditHoraExtraUiEvent.HorasNocturnasChanged(it)) },
-                label = { Text("Horas Nocturnas Trabajadas") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
-            )
+                OutlinedTextField(
+                    value = state.horasNocturnas,
+                    onValueChange = { viewModel.onEvent(EditHoraExtraUiEvent.HorasNocturnasChanged(it)) },
+                    label = { Text("Horas Nocturnas Trabajadas") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            state.calculoActual?.let { calc ->
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text("Resultados del cálculo:", fontWeight = FontWeight.Bold)
-                        HorizontalDivider()
-                        Text("Horas Normales: ${calc.horasNormales}")
-                        Text("Horas al 35%: ${calc.horasAl35}")
-                        Text("Horas al 100%: ${calc.horasAl100}")
-                        Text("Monto Total: RD$ ${calc.montoTotalHorasExtras}", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                state.calculoActual?.let { calc ->
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text("Resultados del cálculo:", fontWeight = FontWeight.Bold)
+                            HorizontalDivider()
+                            Text("Horas Normales: ${calc.horasNormales}")
+                            Text("Horas al 35%: ${calc.horasAl35}")
+                            Text("Horas al 100%: ${calc.horasAl100}")
+                            Text("Monto Total: RD$ ${calc.montoTotalHorasExtras}", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
-            }
 
-            state.horasSemanalesError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                state.horasSemanalesError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            Button(
-                onClick = { viewModel.onEvent(EditHoraExtraUiEvent.Save) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = state.calculoActual != null && !state.isSaving
-            ) {
-                Text("Guardar Cambios")
+                Button(
+                    onClick = { viewModel.onEvent(EditHoraExtraUiEvent.Save) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = state.calculoActual != null && !state.isSaving
+                ) {
+                    Text("Guardar Cambios")
+                }
             }
         }
     }

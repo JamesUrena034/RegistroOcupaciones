@@ -7,17 +7,17 @@ sealed class Screen {
     data object OcupacionList : Screen()
 
     @Serializable
-    data class Ocupacion(val ocupacionId: Int) : Screen()
+    data class Ocupacion(val ocupacionId: Int = 0) : Screen()
 
     @Serializable
     data object EmpleadoList : Screen()
 
     @Serializable
-    data class Empleado(val empleadoId: Int) : Screen()
+    data class Empleado(val empleadoId: Int = 0) : Screen()
 
     @Serializable
     data object HoraExtraList : Screen()
 
     @Serializable
-    data class HoraExtra(val horaExtraId: Int) : Screen()
+    data class HoraExtra(val horaExtraId: Int = 0) : Screen()
 }

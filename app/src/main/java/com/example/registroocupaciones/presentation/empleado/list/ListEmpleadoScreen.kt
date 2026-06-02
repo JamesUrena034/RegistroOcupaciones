@@ -1,8 +1,9 @@
 package com.example.registroocupaciones.presentation.empleado.list
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -23,6 +24,7 @@ import com.example.registroocupaciones.domain.empleadoos.model.Empleado
 @Composable
 fun EmpleadoListScreen(
     onDrawer: () -> Unit,
+    isTabletOrPC: Boolean,
     goToEmpleado: (Int) -> Unit,
     createEmpleado: () -> Unit,
     viewModel: EmpleadoListViewModel = hiltViewModel()
@@ -34,8 +36,10 @@ fun EmpleadoListScreen(
             CenterAlignedTopAppBar(
                 title = { Text("Listado de Empleados") },
                 navigationIcon = {
-                    IconButton(onClick = onDrawer) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    if (!isTabletOrPC) {
+                        IconButton(onClick = onDrawer) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
                     }
                 }
             )
@@ -67,9 +71,12 @@ fun EmpleadoListScreen(
                     Text("No hay empleados registrados")
                 }
             } else {
-                LazyColumn(
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 340.dp),
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    contentPadding = PaddingValues(vertical = 4.dp)
                 ) {
                     items(state.empleados) { empleado ->
                         EmpleadoRow(
