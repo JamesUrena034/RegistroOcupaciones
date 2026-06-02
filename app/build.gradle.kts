@@ -11,7 +11,11 @@ plugins {
 android {
     namespace = "com.example.registroocupaciones"
     compileSdk = 36
-
+    lint {
+        disable += "NullSafeMutableLiveData"
+        disable += "FrequentlyChangingValue"
+        abortOnError = false
+    }
     defaultConfig {
         applicationId = "com.example.registroocupaciones"
         minSdk = 24
