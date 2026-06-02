@@ -2,8 +2,9 @@ package com.example.registroocupaciones.presentation.ocupacion.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
@@ -22,6 +23,7 @@ import com.example.registroocupaciones.domain.ocupaciones.model.Ocupacion
 @Composable
 fun OcupacionListScreen(
     onDrawer: () -> Unit,
+    isTabletOrPC: Boolean,
     goToOcupacion: (Int) -> Unit,
     createOcupacion: () -> Unit,
     viewModel: ListOcupacionViewModel = hiltViewModel()
@@ -31,6 +33,7 @@ fun OcupacionListScreen(
     OcupacionListBody(
         state = state,
         onDrawer = onDrawer,
+        isTabletOrPC = isTabletOrPC,
         onEvent = { event ->
             when (event) {
                 is ListOcupacionUiEvent.Edit -> goToOcupacion(event.id)
@@ -46,6 +49,7 @@ fun OcupacionListScreen(
 private fun OcupacionListBody(
     state: ListOcupacionUiState,
     onDrawer: () -> Unit,
+    isTabletOrPC: Boolean,
     onEvent: (ListOcupacionUiEvent) -> Unit
 ) {
     Scaffold(
@@ -53,8 +57,10 @@ private fun OcupacionListBody(
             CenterAlignedTopAppBar(
                 title = { Text("Listado de Ocupaciones") },
                 navigationIcon = {
-                    IconButton(onClick = onDrawer) {
-                        Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
+                    if (!isTabletOrPC) {
+                        IconButton(onClick = onDrawer) {
+                            Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
+                        }
                     }
                 }
             )
@@ -74,10 +80,14 @@ private fun OcupacionListBody(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
 
-            LazyColumn(
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 340.dp),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                contentPadding = PaddingValues(vertical = 8.dp)
             ) {
                 items(state.ocupaciones) { ocupacion ->
                     OcupacionCard(
@@ -106,7 +116,6 @@ private fun OcupacionCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
             .clickable { onClick() }
     ) {
         Row(
@@ -148,6 +157,7 @@ fun OcupacionListPreview() {
                 )
             ),
             onDrawer = {},
+            isTabletOrPC = false,
             onEvent = {}
         )
     }
